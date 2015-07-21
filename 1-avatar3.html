@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Wobble Drag</title>
+
+    <script src="../../../scripts/template.min.js"></script>
+    <script>
+        LabTemplate.manageLoad = true;
+    </script>
+
+    <link rel="stylesheet" href="../../../styles/css/template.css" type="text/css" />
+</head>
+
+<body class="template">
+
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script src="http://code.createjs.com/createjs-2015.05.21.min.js"></script>
+<script src="webgl-0.8.1.min.js"></script>
+
+<script>
+    var stage = new createjs.SpriteStage("canvas");
+    stage.enableMouseOver();
+    LabTemplate.setupStageResize(stage);
+
+    var m = new createjs.Point(),
+            avatars = [],
+            dragging = false,
+            currentAvatar,
+            finishDrags=[];
+
+    var avatarImages = ["Grant","Bobi","Lanny","Wes","Sebastian","Graves","Eddie","Shawn","Trevor","David","Chris","Alex","Mike","Blair","Manny","Jared","Patrick"];
+    var queue = new createjs.LoadQueue(false);
+    var manifest = [];
+    for (var i= 0, l=avatarImages.length; i<l; i++) {
+        var item = avatarImages[i];
+        manifest.push({src:"Avatars/" + item + ".png", id:item});
+    }
+    queue.on("fileload", handleImageLoad);
+    queue.on("complete", handleLoad);
+    queue.loadManifest(manifest);
+
+    function handleImageLoad(event) {
+        var image = event.result;
+        var ss2 = new createjs.SpriteSheet({
+            images:[image],
+            frames: {width:image.width,height:1,count:image.height}
+        });
+
+        var container = new createjs.SpriteContainer(ss2);
+        container.vx = container.vy = 0;
+
+        var sprites = container.sprites = [],
+            pos = new createjs.Point((Math.random() * stage.canvas.width-100)+50|0, 300);
+        for (var i= 0, l=image.height; i<l; i++) {
+            var sprite = new createjs.Sprite(ss2);
+            sprite.gotoAndStop(i);
+            sprite.x = pos.x;
+            sprite.y = pos.y+i;
+            sprite.regX = image.width/2;
+            sprite.cursor = "pointer";
+
+            container.addChild(sprite);
+            sprites.push(sprite);
+        }
+        stage.addChild(container);
+
+        container.on("mousedown", startDrag);
+        container.on("pressmove", handleDrag);
+        container.on("pressup", handleRelease);
+    }
+
+    function handleLoad(event) {
+        stage.update();
+        LabTemplate.loadComplete();
+        createjs.Ticker.on("tick", update);
+    };
+
+    function startDrag(event) {
+        currentAvatar = event.currentTarget;
+        finishDrags.splice(finishDrags.indexOf(currentAvatar));
+        handleDrag(event);
+        stage.addChild(currentAvatar);
+        update();
+    }
+    function handleDrag(event) {
+        m.setValues(event.stageX, event.stageY);
+    }
+    function handleRelease(event) {
+        finishDrags.push(currentAvatar);
+        currentAvatar.target = m.clone();
+        currentAvatar = null;
+    }
+
+    // Update the current drag
+    function update(event) {
+        if (currentAvatar != null) {
+            updateAvatar(currentAvatar, m);
+        }
+        for (var i = 0, l=finishDrags.length; i<l; i++) {
+            updateAvatar(finishDrags[i]);
+        }
+
+        if (currentAvatar != null || finishDrags.length > 0) {
+            stage.update(event);
+        }
+    }
+
+    function updateAvatar(container, target) {
+
+        if (container == null) { return; }
+
+        var sprites = container.sprites,
+            leftOver = 0;
+
+        for (var i=0, l=sprites.length; i<l; i++) {
+
+            var sprite = sprites[i];
+
+            if (target == null) {
+                target = container.target;
+            }
+
+            if (i == 0) {
+                container.vx += (target.x - sprite.x) * 0.8;
+                container.vy += (target.y + i - sprite.y) * 0.5;
+                container.vx *= 0.5;
+                container.vy *= 0.5;
+
+                sprite.x += container.vx;
+                sprite.y += container.vy;
+
+                sprite.x = sprite.x + 0.5 | 0;
+                sprite.y = sprite.y + 0.5 | 0;
+            } else {
+                sprite.x += (target.x - sprite.x) * 0.95;
+                sprite.y += (target.y+1 - sprite.y) * 0.95;
+
+                leftOver += Math.abs(target.y+1 - sprite.y) + Math.abs(target.x - sprite.x);
+            }
+
+            target = sprite;
+        }
+
+        // Stretch to fill
+        for (var i=0, l=sprites.length-1; i<l; i++) {
+            sprite = sprites[i];
+            var nextKid = sprites[i+1];
+            sprite.scaleY = (nextKid.y - sprite.y);
+        }
+
+        // Remove from list!
+        if (container != currentAvatar && leftOver < 1) {
+            var index = finishDrags.indexOf(container);
+            finishDrags.splice(index, 1);
+        }
+    }
+
+</script>
+</body>
+</html>

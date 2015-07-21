@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Wobble Drag</title>
+
+    <script src="../../../scripts/template.min.js"></script>
+    <script>
+        LabTemplate.manageLoad = true;
+    </script>
+
+    <link rel="stylesheet" href="../../../styles/css/template.css" type="text/css" />
+</head>
+
+<body class="template">
+
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script src="http://code.createjs.com/createjs-2015.05.21.min.js"></script>
+<script src="webgl-0.8.1.min.js"></script>
+
+<script>
+    var stage = new createjs.SpriteStage("canvas");
+    var image = new Image();
+    image.onload = function() {
+        createPixels();
+        LabTemplate.loadComplete();
+    }
+    image.src = "Avatars/Lanny.png";
+
+    var m = new createjs.Point(),
+            kids = [],
+            container;
+
+    function createPixels() {
+        var ss2 = new createjs.SpriteSheet({
+            images:[image],
+            frames: {width:image.width,height:1,count:image.height}
+        });
+
+        container = new createjs.SpriteContainer(ss2);
+        container.vx = container.vy = 0;
+        stage.addChild(container);
+
+        for (var i= 0, l=image.height; i<l; i++) {
+            var sprite = new createjs.Sprite(ss2);
+            sprite.gotoAndStop(i);
+            sprite.regX = image.width/2;
+            sprite.vx = sprite.vy = 0;
+
+            container.addChild(sprite);
+            kids.push(sprite);
+        }
+
+        stage.on("stagemousemove", function(event) {
+            m.setValues(event.stageX, event.stageY);
+        });
+    }
+
+    function update(event) {
+        var target = m;
+
+        for (var i=0, l=kids.length; i<l; i++) {
+
+            var kid = kids[i];
+
+            if (i == 0) {
+                kid.vx += (target.x - kid.x) * 0.5;
+                kid.vy += (target.y + i - kid.y) * 0.5;
+                kid.vx *= 0.5;
+                kid.vy *= 0.5;
+
+                kid.x += kid.vx;
+                kid.y += kid.vy;
+            } else {
+                kid.x += (target.x - kid.x) * 0.95;
+                kid.y += (target.y+1 - kid.y) * 0.95;
+            }
+
+            target = kid;
+        }
+
+        for (var i=0, l=kids.length-1; i<l; i++) {
+            var kid = kids[i];
+            var nextKid = kids[i+1];
+            kid.scaleY = (nextKid.y - kid.y);
+        }
+
+        stage.update();
+        //stage2.update();
+    }
+
+    createjs.Ticker.on("tick", update);
+
+    LabTemplate.setupStageResize(stage);
+
+</script>
+
+</body>
+</html>

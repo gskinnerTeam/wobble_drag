@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Wobble Drag</title>
+
+    <link rel="stylesheet" href="../../../styles/css/template.css" type="text/css" />
+    <script src="../../../scripts/template.min.js"></script>
+</head>
+
+<body class="template">
+
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script src="http://code.createjs.com/createjs-2015.05.21.min.js"></script>
+<script src="webgl-0.8.1.min.js"></script>
+
+<script>
+    var stage = new createjs.SpriteStage("canvas");
+    var image = new Image();
+    image.onload = function() {
+        createPixels();
+    }
+    image.src = "Chile-Flag.jpg";
+
+    var m = new createjs.Point(),
+            sprites = [],
+            container,
+            size = 20, cols, rows;
+
+    function createPixels() {
+
+        var maxSize = 300;
+        var r = Math.min(maxSize/image.width, maxSize/image.height);
+
+        var bmp = new createjs.Bitmap(image);
+        bmp.cache(0,0,image.width,image.height,r);
+        image = bmp.cacheCanvas;
+
+        rows = image.height/size|0;
+        cols = image.width/size|0;
+
+        var l = rows*cols;
+
+        var ss = new createjs.SpriteSheet({
+            images: [image],
+            frames: {width:size, height:size, count:l}
+        });
+
+        container = new createjs.SpriteContainer(ss);
+        container.vx = container.vy = 0;
+        container.regX = image.width/2;
+        container.regY = image.height/2;
+        stage.addChild(container);
+
+
+        for (var i=0; i<l; i++) {
+            var sprite = new createjs.Sprite(ss);
+            container.addChild(sprite);
+            sprite.gotoAndStop(i);
+
+            sprite.vx = sprite.vy = 0;
+            sprites.push(sprite);
+        }
+
+        for (var i=0; i<l; i++) {
+            var sprite = sprites[i];
+
+            var col = i%cols;
+            var row = i/cols|0;
+
+            // Look behind
+            if (col>0) {
+                sprite.left = sprites[i-1]; // works
+            }
+            if (i>cols-1) {
+                sprite.top = sprites[i-cols]; // works
+            }
+
+            // Look ahead
+            if (col < cols - 1) {
+                sprite.right = sprites[i + 1];
+            }
+            if (row < rows - 1) {
+                sprite.bottom = sprites[i + cols];
+            }
+        }
+
+        stage.on("stagemousemove", function(event) {
+            m.setValues(event.stageX, event.stageY);
+        });
+    }
+
+    function update(event) {
+
+        for (var i=0, l=sprites.length; i<l; i++) {
+
+            var col = i%cols;
+            var row = i/cols|0;
+            var colRange = Math.pow((Math.abs(col/cols - 0.5))/0.5, 2); // 0-1-0
+            var colEase = 0.8 + (0.015*colRange);
+            var rowRange = Math.pow(0.5-(Math.abs(row/rows - 0.5))/0.5, 2); // 0-1-0
+            var rowEase = 0.8 + (0.015*rowRange);
+
+            var sprite = sprites[i];
+            var left = m.x, top = m.y;
+            if (sprite.left) { left = sprite.left.x + size; }
+            if (sprite.top) { top = sprite.top.y + size; }
+
+            sprite.x += (left - sprite.x) * colEase;
+            sprite.y += (top - sprite.y) * rowEase;
+        }
+        for (var i=0, l=sprites.length; i<l; i++) {
+            sprite = sprites[i];
+            if (sprite.right) { sprite.scaleX = (sprite.right.x-sprite.x)/size; }
+            if (sprite.bottom) { sprite.scaleY = (sprite.bottom.y - sprite.y)/size; }//
+        }
+
+        stage.update(event);
+    }
+
+    createjs.Ticker.on("tick", update);
+
+    LabTemplate.setupStageResize(stage);
+
+</script>
+
+</body>
+</html>
