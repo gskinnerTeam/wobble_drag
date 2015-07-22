@@ -3,6 +3,8 @@ A single image used with an EaselJS SpriteSheet to create an interesting drag an
 
 This lab can be viewed at http://labs.gskinner.com/15/wobble_drag
 
+![Wobble Drag](screenshot.jpg "Wobble Drag")
+
 ##Versions##
  * *1-avatar1.html:* The start of the experiment, a simple mouse follow with an "ease-out" 
 equation. The items scale vertically to remove the gaps between them. This sample uses the SpriteStage,
