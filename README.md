@@ -17,4 +17,7 @@ which uses WebGL.
  to drop the WebGL to color-transform the ghosts. The ghosts flip on their vertical-axis to "look" towards 
  Pac-man.
  * *2-avatarX.html:* A number of additional samples, which tried to apply the effect to both x and y axises.
+ 
+ ##Authors##
+ * Lanny McNie
 
