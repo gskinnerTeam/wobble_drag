@@ -17,7 +17,8 @@
 
 <script>
     var stage = new createjs.Stage("canvas");
-    stage.enableMouseOver();
+    //stage.enableMouseOver();
+    createjs.Touch.enable(stage);
     LabTemplate.setupStageResize(stage);
 
     var m = new createjs.Point(),

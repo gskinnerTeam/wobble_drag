@@ -17,6 +17,7 @@
 
 <script>
     var stage = new createjs.SpriteStage("canvas");
+    createjs.Touch.enable(stage);
     var image = new Image();
     image.onload = function() {
         createPixels();
