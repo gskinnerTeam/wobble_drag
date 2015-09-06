@@ -109,19 +109,22 @@
     }
     function handleDrag(event) {
         m.setValues(event.stageX, event.stageY);
-
-        // Look
-        for (var i = 0, l=pieces.length; i < l; i++) {
-            var obj = pieces[i];
-            if (obj.parent.pacman) { continue; }
-            obj.scaleX = (obj.x < pacman.x) ? 1 : -1;
-        }
-
     }
     function handleRelease(event) {
         finishDrags.push(currentAvatar);
         currentAvatar.target = m.clone();
         currentAvatar = null;
+    }
+
+    var active = true;
+    function deactivate(time) {
+        if (time == null) { time = 3000; }
+        setTimeout(function() {
+            active = false;
+        }, time);
+        setTimeout(function() {
+            active = true;
+        }, time + 3000);
     }
 
     // Update the current drag
@@ -132,6 +135,15 @@
         for (var i = 0, l=finishDrags.length; i<l; i++) {
             updateAvatar(finishDrags[i]);
         }
+
+        // Look
+        for (var i = 0, l=pieces.length; i < l; i++) {
+            var obj = pieces[i];
+            if (obj.parent.pacman) { continue; }
+            obj.scaleX = (obj.x < pacman.x) ? 1 : -1;
+        }
+
+        if (!active) { return; }
 
         if (currentAvatar != null || finishDrags.length > 0) {
             stage.update(event);
