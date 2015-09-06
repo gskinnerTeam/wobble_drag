@@ -35,9 +35,14 @@
         var item = avatarImages[i];
         manifest.push({src:"Avatars/" + item + ".png", id:item});
     }
+    queue.on("progress", handleProgress);
     queue.on("fileload", handleImageLoad);
     queue.on("complete", handleLoad);
     queue.loadManifest(manifest);
+
+    function handleProgress(event) {
+        LabTemplate.loadProgress(event.progress);
+    }
 
     function handleImageLoad(event) {
         var image = event.result;

@@ -39,9 +39,14 @@
     }
     manifest.push({src:"Avatars/pacman.png", id:"pacman"});
 
+    queue.on("progress", handleProgress);
     queue.on("fileload", handleImageLoad);
     queue.on("complete", handleLoad);
     queue.loadManifest(manifest);
+
+    function handleProgress(event) {
+        LabTemplate.loadProgress(event.progress);
+    }
 
     function handleImageLoad(event) {
         var image = event.result;
