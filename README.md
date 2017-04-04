@@ -1,9 +1,9 @@
 # gskinner lab: Wobble Drag
 A single image used with an EaselJS SpriteSheet to create an interesting drag and drop effect.
 
-This lab can be viewed at http://lab.gskinner.com/15/wobble_drag
+This lab can be viewed at https://lab.gskinner.com/wobble_drag
 
-![Wobble Drag](screenshot.jpg "Wobble Drag")
+![Wobble Drag](screenshot.png "Wobble Drag")
 
 ##Versions##
  * *1-avatar1.html:* The start of the experiment, a simple mouse follow with an "ease-out" 
