@@ -1,11 +1,11 @@
-# gskinner lab: Wobble Drag
+#gskinner lab: Wobble Drag
 A single image used with an EaselJS SpriteSheet to create an interesting drag and drop effect.
 
 This lab can be viewed at https://lab.gskinner.com/wobble_drag
 
 ![Wobble Drag](screenshot.png "Wobble Drag")
 
-##Versions##
+##Versions
  * *1-avatar1.html:* The start of the experiment, a simple mouse follow with an "ease-out" 
 equation. The items scale vertically to remove the gaps between them. This sample uses the SpriteStage,
 which uses WebGL.
@@ -18,6 +18,6 @@ which uses WebGL.
  Pac-man.
  * *2-avatarX.html:* A number of additional samples, which tried to apply the effect to both x and y axises.
  
- ##Authors##
+ ##Authors
  * Lanny McNie
 
