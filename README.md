@@ -13,9 +13,8 @@ which uses WebGL.
  which gives a more "wobbly" effect.
  * *1-avatar3.html:* Multiple sprites are added, and the mouse follow is applied during drag and drop. Some
  additional work is done to finish the transition when the sprite is dropped.
- * *1-avatar4.html:* The same as the previous, except swapped out with Pac-man and friends. This sample had
- to drop the WebGL to color-transform the ghosts. The ghosts flip on their vertical-axis to "look" towards 
- Pac-man.
+ * *1-avatar4.html:* The same as the previous, except swapped out with Pac-man and friends. Updated to use 
+ StageGL, and pre-cached and filtered images. The ghosts flip on their vertical-axis to "look" towards Pac-man.
  * *2-avatarX.html:* A number of additional samples, which tried to apply the effect to both x and y axises.
  
  ## Authors
